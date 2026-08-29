@@ -786,6 +786,41 @@ ul, ol { margin: 0; padding: 0; }
 .section-head { max-width: 46rem; margin-bottom: var(--s5); }
 .section-head p { margin-top: var(--s2); color: var(--ink-muted); }
 
+/* In-page navigation for the resources page's state sections. Pills rather
+   than a bulleted list, because it sits between a heading and the content it
+   jumps into and should not read as body copy. */
+.jump-nav { margin-bottom: var(--s5); }
+.jump-nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+.jump-nav a {
+  display: inline-block;
+  padding: var(--s1) var(--s3);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.jump-nav a:hover {
+  border-color: var(--accent);
+  color: var(--accent-deep);
+}
+
+/* A standalone photograph introducing a page section. Wider than the 3:2
+   feature cards so it reads as a band rather than a card; object-fit crops
+   whatever aspect the supplied photograph happens to be. */
+.page-media {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius);
+  margin-bottom: var(--s5);
+}
+
 /* A block of running copy held to a readable width. */
 .prose { max-width: 46rem; }
 

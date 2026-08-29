@@ -2,3 +2,9 @@
 # Vercel serves. vercel.json covers the same ground there.
 .htaccess
 README.md
+
+# Source assets kept in the repo but referenced by no page. Excluding them
+# keeps ~560 KB off every deployment. If you ever place one on a page, remove
+# its line here first or it will 404 in production.
+images/logo-original.webp
+images/logo-lockup.png

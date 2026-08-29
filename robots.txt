@@ -1,0 +1,8 @@
+# Reformed Hope Foundation
+# Everything on this site is public and safe to index. There is no admin area,
+# no search-result pages and no duplicate content to exclude.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://reformedhopeva.org/sitemap.xml

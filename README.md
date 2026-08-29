@@ -48,21 +48,28 @@ on both.
 
 | What | Where | Notes |
 |---|---|---|
-| **EIN** | `XX-XXXXXXX` in the footer of all 7 pages | Search for `EIN PLACEHOLDER`. Also confirm the exact tax-status wording — no 501(c)(3) claim is currently made anywhere on the site. |
+| **EIN** | footer of all 9 pages | Search for `EIN PLACEHOLDER`. The EIN line is **deliberately not rendered** — a visibly fake number in the footer of a site that solicits donations reads worse than no number at all. Add `<p>EIN 12-3456789</p>` back in all 9 files once the real EIN exists. Confirm the exact tax-status wording too — no 501(c)(3) claim is currently made anywhere on the site. |
 | **Donation platform** | `donate.html` | Search for `DONATION EMBED GOES HERE`. Replace the whole `.donate-placeholder` block with the provider's embed. Do not hand-build a payment form. |
 | **Photographs** | `images/` | See the table below. |
 
 ## Client assets
 
-Drop replacements in at the same paths and filenames and no code needs to change.
+Drop replacements in at the same paths and filenames and no *markup structure*
+needs to change.
+
+**One exception, and it matters: `alt` text.** The placeholder images carry
+`alt=""` because a brand-toned gradient conveys nothing to a screen-reader user.
+A real photograph does convey something, so it needs a descriptive `alt` — and
+leaving the empty one behind turns a correct decision into a WCAG 1.1.1 failure.
+Every affected `<img>` has a comment above it saying so.
 
 | File | Used on | Notes |
 |---|---|---|
 | `images/logo-mark.png` | header + footer, every page | The phoenix, cropped from the supplied logo with a transparent background. Replace with the final mark at 256×256 or larger, square, transparent. |
-| `images/allison-viescas-headshot.jpg` | `about.html` | Square (1:1). **Update the `alt` text if the photo changes.** |
+| `images/allison-viescas-headshot.jpg` | `about.html` | Square (1:1). **Currently a brand-toned placeholder, not a photograph** — but unlike the others it carries a descriptive `alt` announcing a portrait of a named person. Until the real headshot lands, screen-reader users are told there is a portrait that does not exist. Highest-priority swap. |
 | `images/caring-for-caregivers.jpg` | `index.html` | 3:2. Currently a brand-toned placeholder. When you swap in a real photo, give it descriptive `alt` text — it is currently `alt=""` because a placeholder carries no information. |
 | `images/financial-literacy-youth.jpg` | `index.html` | 3:2, same note as above. |
-| `images/care-works.jpg` | spare | Not currently placed on a page. |
+| `images/care-works.jpg` | `care-works.html` | 3:2. Brand-toned placeholder, same `alt` note as the two above. |
 | `images/og-card.png` | social sharing preview | 1200×630. |
 | `images/logo-original.webp` | — | The original supplied logo. Source asset only, not referenced by any page. |
 
@@ -105,12 +112,49 @@ for text.
 ## Editing the shared header and footer
 
 There are no server-side includes, so the header and footer are duplicated in
-each of the 7 HTML files. **A change to the navigation must be made in all
-seven**: `index.html`, `about.html`, `programs.html`, `care-works.html`,
-`resources.html`, `donate.html`, `404.html`.
+each of the 9 HTML files. **A change to the navigation must be made in all
+nine**: `index.html`, `about.html`, `programs.html`, `care-works.html`,
+`resources.html`, `contact.html`, `donate.html`, `privacy.html`, `404.html`.
 
 Note that `404.html` uses root-relative paths (`/styles.css`) because Apache
-serves it from any URL depth; the other pages use relative paths.
+serves it from any URL depth; the other pages use relative paths. Any script
+that edits all nine files has to account for that split, and for the fact that
+the current page's nav link carries `aria-current="page"`.
+
+`privacy.html` is deliberately **not** in the main nav — it is reached from the
+footer, which is where people look for it.
+
+## Contact details live in exactly one place
+
+`contact.html` carries a commented-out `EMAIL / PHONE / POSTAL SLOT`. That is
+the only spot on the site where an address, phone number or email is meant to
+appear as content, so adding them later is one edit rather than a hunt through
+nine files. When you fill it in, also complete the matching fields in the
+JSON-LD block at the bottom of `index.html` — the comment there lists them.
+
+The contact page is organized by **reason for getting in touch**, not by
+channel. Several rows currently point at the same hosted Google Form; that is
+temporary, and labelling the reason means each row can be repointed
+independently later without the page reading oddly in the meantime.
+
+## Generated files
+
+These were produced from `images/logo-mark.png` and can be regenerated from it
+if the logo changes:
+
+| File | Purpose |
+|---|---|
+| `images/favicon-16x16.png`, `images/favicon-32x32.png` | PNG favicons alongside the `.ico` |
+| `images/icon-192.png`, `images/icon-512.png` | manifest icons, composited on the brand cream |
+| `images/icon-maskable-512.png` | maskable icon; the mark sits inside the inner 60% so launchers can crop it to any shape |
+| `apple-touch-icon.png` (root) | iOS probes this path before parsing the HTML |
+| `site.webmanifest` | installable metadata and `theme-color` |
+| `robots.txt`, `sitemap.xml` | the sitemap uses the extensionless URL form so it matches the `<link rel="canonical">` on each page |
+
+**Still missing: an SVG favicon.** The `sizes="any"` on the `.ico` is there so
+an SVG would take precedence, but there is no vector version of the logo in the
+repo — only rasters. Tracing a PNG would produce a worse mark than the original
+artwork, so this waits for a real vector from the designer.
 
 ## Local preview
 

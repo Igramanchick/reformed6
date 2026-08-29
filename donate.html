@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Support Our Work | Reformed Hope Foundation</title>
-<meta name="description" content="Support the Reformed Hope Foundation's work with children, families and adults with disabilities in Northern Virginia. Online giving is coming soon; contact us in the meantime.">
+<meta name="description" content="Support the Reformed Hope Foundation's work with children, families and adults with disabilities in Northern Virginia.">
 <link rel="canonical" href="https://reformedhopeva.org/donate">
 
 <meta property="og:type" content="website">
@@ -15,10 +15,22 @@
 <meta property="og:url" content="https://reformedhopeva.org/donate">
 <meta property="og:image" content="https://reformedhopeva.org/images/og-card.png">
 <meta property="og:image:alt" content="The Reformed Hope Foundation logo: a rising phoenix above the organization's name.">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Support Our Work | Reformed Hope Foundation">
+<meta name="twitter:description" content="Support the Reformed Hope Foundation's work with children, families and adults with disabilities in Northern Virginia.">
+<meta name="twitter:image" content="https://reformedhopeva.org/images/og-card.png">
+<meta name="twitter:image:alt" content="The Reformed Hope Foundation logo: a rising phoenix above the organization's name.">
 
 <link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#3E4A3D">
 <link rel="preload" href="fonts/source-serif-4-variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -46,6 +58,7 @@
         <li><a class="site-nav__link" href="programs.html">Programs</a></li>
         <li><a class="site-nav__link" href="care-works.html">Care Works</a></li>
         <li><a class="site-nav__link" href="resources.html">Caregiver Resources</a></li>
+        <li><a class="site-nav__link" href="contact.html">Contact</a></li>
       </ul>
     </nav>
 
@@ -97,6 +110,9 @@
                order once it is in place; provider defaults often fail WCAG AA.
            ===================================================================== -->
       <div class="donate-placeholder">
+        <!-- Decorative: the logo mark stands in for the donation embed.
+             alt="" is correct here and stays correct — it is the brand mark, not
+             a photograph, and the heading beside it carries the meaning. -->
         <img src="images/logo-mark.png" alt="" width="256" height="256" loading="lazy" decoding="async">
         <h2>Secure online donations coming soon</h2>
         <p>
@@ -164,6 +180,7 @@
           <li><a href="programs.html">Programs</a></li>
           <li><a href="care-works.html">Care Works</a></li>
           <li><a href="resources.html">Caregiver Resources</a></li>
+          <li><a href="contact.html">Contact</a></li>
           <li><a href="donate.html">Donate</a></li>
         </ul>
       </div>
@@ -171,7 +188,7 @@
       <div>
         <h2>Get in touch</h2>
         <ul class="footer-list">
-          <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSdNdwp8s2C2VCPM6iFEcwlHPF3JmdPkFcrHyDxlL9-gL91ISQ/viewform">Contact the Reformed Hope Foundation</a></li>
+          <li><a href="contact.html">Contact the Reformed Hope Foundation</a></li>
           <li><a href="https://www.meetup.com/meetup-group-pnudxlaz/">Caring for Caregivers on Meetup</a></li>
           <li><a href="donate.html">Support our work</a></li>
         </ul>
@@ -181,10 +198,12 @@
 
     <div class="site-footer__base">
       <p>&copy; 2026 Reformed Hope Foundation. All rights reserved.</p>
-      <!-- EIN PLACEHOLDER: replace XX-XXXXXXX with the Foundation's registered
-           EIN before launch. Confirm the exact tax-status wording with the
-           client before adding any 501(c)(3) claim here. -->
-      <p>EIN XX-XXXXXXX</p>
+      <!-- EIN PLACEHOLDER: the Foundation's registered EIN goes here, as a
+           <p>EIN 12-3456789</p> line. It is deliberately absent rather than
+           shown as a dummy number: a visibly fake EIN in the footer of a site
+           that solicits donations reads worse than no EIN at all. Confirm the
+           exact tax-status wording before adding any 501(c)(3) claim here. -->
+      <p><a href="privacy.html">Privacy</a></p>
     </div>
   </div>
 </footer>
