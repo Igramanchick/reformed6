@@ -1,0 +1,823 @@
+@charset "utf-8";
+/* ==========================================================================
+   Reformed Hope Foundation — styles.css
+   Single stylesheet. No build step. No frameworks.
+
+   PALETTE PROVENANCE
+   Every colour below is sampled from, or darkened from, the organisation's
+   logo (Reformed hope LOGO.webp). The raw logo colours were measured and
+   contrast-tested; two of them fail WCAG AA as text, so the text tokens are
+   darkened derivatives of the same hues:
+
+     logo cream  #FDFAEF  -> --cream   (used as-is, page background)
+     logo sage   #80857B  -> 3.62:1 on cream: FAILS AA as text. -> --sage
+     logo orange #DF7D31  -> 2.82:1 on cream: FAILS. Kept as --flame,
+                             permitted for RULES AND FILLS ONLY, never text.
+     wing gold   #EBA85A  -> --gold, a fill colour (Donate button), never text.
+
+   HARD RULE: --flame and --gold may only appear as fills, rules and motifs on
+   light backgrounds. Orange *text* always uses --accent (#A85212), which was
+   chosen to clear 4.5:1 on all three light grounds the site uses, not just on
+   cream. (--gold is legible as text on the dark footer at 5.54:1, and is used
+   that way for the footer link hover — but never on a light ground.)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Font — self-hosted, no external requests.
+   Source Serif 4 (SIL Open Font License 1.1). Google serves a single
+   variable file covering weights 400-700, so one 122 KB request covers
+   every weight the site uses.
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 400 700;              /* variable weight axis */
+  font-display: swap;
+  src: url("fonts/source-serif-4-variable.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+                 U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
+                 U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* --------------------------------------------------------------------------
+   2. Design tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Colour */
+  --cream:        #FDFAEF;  /* page background — exact logo background        */
+  --surface:      #F5F0E1;  /* alternating section bands                      */
+  --surface-warm: #FAECD4;  /* warm tint for accent panels                    */
+  --ink:          #2E332C;  /* body text      — 12.36:1 on cream              */
+  --ink-muted:    #5A6157;  /* secondary text —  6.12:1 on cream              */
+  --sage:         #3E4A3D;  /* header/footer  — cream-on 8.93:1               */
+  --sage-deep:    #333D32;  /* footer base, nav hover                         */
+  --on-sage:      #FDFAEF;  /* text on sage   —  8.93:1                       */
+  --on-sage-dim:  #C9CEC3;  /* muted on sage  —  5.82:1                       */
+  --accent:       #A85212;  /* orange TEXT — 5.18:1 cream, 4.75:1 surface,
+                               4.64:1 warm, 5.41:1 under white. Clears AA on
+                               every background the site actually uses.       */
+  --accent-deep:  #8F430B;  /* orange text hover — 6.75:1 cream, 6.19:1 surface*/
+  --gold:         #EBA85A;  /* FILL only — ink-on 6.32:1, 4.57:1 vs sage      */
+  --gold-hi:      #F3C282;  /* gold hover fill — ink-on 8.06:1                */
+  --flame:        #DF7D31;  /* the true logo orange. 2.82:1 on cream, so it is
+                               confined to PURELY DECORATIVE rules and motifs:
+                               never text, never a control boundary, never the
+                               only way something is identified.              */
+  --line:         #E2DBC7;  /* hairline list dividers — DECORATIVE only       */
+  --line-strong:  #CFC6AC;  /* card and panel edges — DECORATIVE only. 1.63:1
+                               on cream, so it must never bound a control;
+                               buttons use --ink-muted instead.               */
+
+  /* Spacing — strict 8px rhythm. No arbitrary values anywhere in this file. */
+  --s1: 0.5rem;   /*   8px */
+  --s2: 1rem;     /*  16px */
+  --s3: 1.5rem;   /*  24px */
+  --s4: 2rem;     /*  32px */
+  --s5: 3rem;     /*  48px */
+  --s6: 4rem;     /*  64px */
+  --s7: 6rem;     /*  96px */
+  --s8: 8rem;     /* 128px */
+
+  /* Type */
+  --font-serif: "Source Serif 4", Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-sans:  ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                "Helvetica Neue", Arial, sans-serif;
+
+  --fs-display: clamp(2.375rem, 1.55rem + 3.4vw, 3.875rem);
+  --fs-h2:      clamp(1.75rem, 1.38rem + 1.5vw, 2.4375rem);
+  --fs-h3:      clamp(1.1875rem, 1.11rem + 0.32vw, 1.375rem);
+  --fs-h4:      1.0625rem;
+  --fs-lead:    clamp(1.125rem, 1.06rem + 0.3vw, 1.3125rem);
+  --fs-body:    1.0625rem;   /* 17px — above the 16px floor */
+  --fs-sm:      0.9375rem;   /* 15px — supporting text only, never body copy */
+  --fs-eyebrow: 0.75rem;
+
+  --measure:  34rem;         /* comfortable reading measure */
+  --wrap:     72rem;
+  --radius:   4px;
+  --header-h: 4.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. Reset / base
+   -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + var(--s3)); /* sticky-header offset */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--fs-display); font-weight: 600; line-height: 1.08; letter-spacing: -0.022em; }
+h2 { font-size: var(--fs-h2);      font-weight: 600; line-height: 1.18; letter-spacing: -0.016em; }
+h3 { font-size: var(--fs-h3);      font-weight: 600; line-height: 1.32; letter-spacing: -0.008em; }
+h4 { font-size: var(--fs-h4);      font-weight: 700; line-height: 1.40; letter-spacing: 0.005em; }
+
+p { margin: 0 0 var(--s3); max-width: var(--measure); }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent-deep); }
+
+ul, ol { margin: 0; padding: 0; }
+
+/* Focus — visible on every interactive element, on light and dark grounds.
+   Never removed without a replacement. */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.site-header :focus-visible,
+.site-footer :focus-visible,
+.cta-band :focus-visible {
+  outline-color: var(--gold);
+}
+
+::selection { background: var(--gold); color: var(--ink); }
+
+/* --------------------------------------------------------------------------
+   4. Layout primitives
+   -------------------------------------------------------------------------- */
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--s3);
+}
+@media (min-width: 48rem) { .wrap { padding-inline: var(--s5); } }
+
+.section { padding-block: var(--s6); }
+@media (min-width: 48rem) { .section { padding-block: var(--s7); } }
+
+.section--surface { background: var(--surface); }
+.section--tight   { padding-block: var(--s5); }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* Skip link — first focusable element on every page */
+.skip-link {
+  position: absolute;
+  top: var(--s1); left: var(--s1);
+  z-index: 100;
+  transform: translateY(-200%);
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  padding: var(--s2) var(--s3);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.skip-link:focus { transform: translateY(0); color: var(--ink); }
+
+/* --------------------------------------------------------------------------
+   5. Brand motif — the paired rules that flank the phoenix in the logo,
+   reused as the section eyebrow marker.
+   -------------------------------------------------------------------------- */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin: 0 0 var(--s2);
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.eyebrow::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 1.75rem; height: 2px;
+  background: var(--flame);
+  border-radius: 2px;
+}
+.eyebrow--on-sage { color: var(--on-sage-dim); }
+.eyebrow--on-sage::before { background: var(--gold); }
+
+/* --------------------------------------------------------------------------
+   6. Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s1);
+  min-height: 2.75rem;               /* 44px touch target */
+  padding: var(--s2) var(--s4);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+
+/* Primary = Caring for Caregivers sign-up, the site's main conversion.
+   Deep sage ground, cream text: 8.93:1. */
+.btn--primary {
+  background: var(--sage);
+  border-color: var(--sage);
+  color: var(--on-sage);
+}
+.btn--primary:hover { background: var(--sage-deep); border-color: var(--sage-deep); color: var(--on-sage); }
+
+/* Donate = wing-gold fill with deep ink, 6.32:1. Sampled straight from the
+   phoenix highlight so it reads as brand, not as a generic CTA.
+   White-on-gold would be 2.04:1 — do not use it. */
+.btn--donate {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink);
+}
+.btn--donate:hover { background: var(--gold-hi); border-color: var(--gold-hi); color: var(--ink); }
+
+.btn--ghost {
+  background: transparent;
+  /* A control boundary must meet 3:1 (WCAG 1.4.11). --line-strong is only
+     1.63:1 on cream — fine for decorative card edges, not for a button. */
+  border-color: var(--ink-muted);
+  color: var(--ink);
+}
+.btn--ghost:hover { background: var(--surface); border-color: var(--ink-muted); color: var(--ink); }
+
+.btn--ghost-sage {
+  background: transparent;
+  border-color: var(--on-sage-dim);
+  color: var(--on-sage);
+}
+.btn--ghost-sage:hover { background: rgba(253, 250, 239, .12); border-color: var(--on-sage); color: var(--on-sage); }
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: var(--s4);
+}
+
+/* Text link with a directional marker. Link text always names its
+   destination — never "click here". */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  font-weight: 600;
+  text-decoration: none;
+  /* This underline identifies the link, so it is held to the 3:1 non-text
+     contrast rule and uses --accent (5.18:1), not --flame (2.82:1). */
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px;
+}
+.link-arrow:hover { border-bottom-color: var(--accent-deep); }
+.link-arrow::after { content: "\2192"; transition: transform .18s ease; }
+.link-arrow:hover::after { transform: translateX(3px); }
+
+/* --------------------------------------------------------------------------
+   7. Sticky header
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--sage);
+  border-bottom: 3px solid var(--flame);   /* flame rule, from the logo */
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: var(--header-h);
+}
+
+/* Brand: phoenix mark as an image, organisation name as live HTML text.
+   The name is never baked into an image. */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  text-decoration: none;
+  color: var(--on-sage);
+  flex: 0 0 auto;
+}
+.brand__mark { width: 2.5rem; height: 2.5rem; flex: 0 0 auto; }
+.brand__name {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.brand__name span {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-sage-dim);
+}
+
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 2.75rem;
+  padding: var(--s1) var(--s2);
+  background: transparent;
+  border: 2px solid var(--on-sage-dim);
+  border-radius: var(--radius);
+  color: var(--on-sage);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+.nav-toggle__bars { position: relative; width: 1rem; height: 2px; background: currentColor; }
+.nav-toggle__bars::before,
+.nav-toggle__bars::after {
+  content: ""; position: absolute; left: 0;
+  width: 1rem; height: 2px; background: currentColor;
+}
+.nav-toggle__bars::before { top: -5px; }
+.nav-toggle__bars::after  { top:  5px; }
+
+.site-nav__list {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  list-style: none;
+}
+.site-nav__link {
+  display: block;
+  padding: var(--s1) var(--s2);
+  border-radius: var(--radius);
+  color: var(--on-sage);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.site-nav__link:hover { background: var(--sage-deep); color: var(--on-sage); text-decoration: underline; }
+.site-nav__link[aria-current="page"] {
+  color: var(--on-sage);
+  box-shadow: inset 0 -2px 0 var(--gold);
+}
+
+.header-actions { display: flex; align-items: center; gap: var(--s2); flex: 0 0 auto; }
+.header-actions .btn { padding-inline: var(--s3); font-size: var(--fs-sm); }
+
+/* Mobile: collapse the link list. The Donate button sits OUTSIDE the
+   collapsible list so the secondary conversion is never hidden in a menu. */
+@media (max-width: 60rem) {
+  .site-header__inner { flex-wrap: wrap; padding-block: var(--s2); }
+  /* Pushes the toggle and the Donate button together on the right, leaving
+     the brand on the left. The toggle sits before the nav in the DOM so the
+     tab order reads: brand -> toggle -> menu links -> Donate. */
+  .nav-toggle { margin-left: auto; }
+  .site-nav { flex-basis: 100%; order: 3; display: none; }
+  .site-nav[data-open="true"] { display: block; }
+  .site-nav__list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding-block: var(--s2);
+    border-top: 1px solid var(--sage-deep);
+  }
+  .site-nav__link { padding: var(--s2); border-radius: 0; font-size: var(--fs-body); }
+  .site-nav__link[aria-current="page"] { box-shadow: inset 3px 0 0 var(--gold); }
+}
+/* Narrow phones: the brand, the toggle and Donate must share one row, so the
+   toggle drops its visible label and the brand shrinks. The label text stays
+   in the accessibility tree (clipped, not display:none), so the button keeps
+   its accessible name of "Menu". */
+@media (max-width: 30rem) {
+  .site-header__inner { gap: var(--s2); }
+  .brand { gap: var(--s1); }
+  .brand__mark { width: 2rem; height: 2rem; }
+  .brand__name { font-size: 0.9375rem; }
+  .brand__name span { font-size: 0.5625rem; letter-spacing: 0.14em; }
+  .nav-toggle { padding-inline: var(--s2); }
+  .nav-toggle__label {
+    position: absolute; width: 1px; height: 1px;
+    margin: -1px; padding: 0; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+  .header-actions .btn { padding-inline: var(--s2); padding-block: var(--s1); }
+  .site-header .wrap { padding-inline: var(--s2); }
+}
+
+/* 320px-class phones: shrink the brand once more so the header stays on a
+   single row. A sticky header that wraps costs a third of the screen. */
+@media (max-width: 22.5rem) {
+  .site-header__inner { gap: var(--s1); }
+  .brand__mark { width: 1.75rem; height: 1.75rem; }
+  .brand__name { font-size: 0.8125rem; }
+  /* Square the toggle to exactly the 44px touch target — no wider. */
+  .nav-toggle { width: 2.75rem; padding-inline: 0; justify-content: center; }
+  /* Only the header bar tightens to 8px; the page content keeps its margins. */
+  .site-header .wrap { padding-inline: var(--s1); }
+}
+
+@media (min-width: 60.0625rem) {
+  .nav-toggle { display: none; }
+  .site-nav { display: block !important; }
+}
+
+/* --------------------------------------------------------------------------
+   8. Hero — asymmetric 7/5 split. Deliberately NOT a centred headline
+   with two buttons beneath it.
+   -------------------------------------------------------------------------- */
+.hero {
+  padding-block: var(--s6) var(--s7);
+  border-bottom: 1px solid var(--line);
+}
+.hero__grid { display: grid; gap: var(--s5); align-items: center; }
+@media (min-width: 60rem) {
+  .hero__grid { grid-template-columns: 7fr 5fr; gap: var(--s7); }
+}
+.hero h1 { max-width: 20ch; }
+.hero__lead {
+  margin-top: var(--s3);
+  max-width: 32rem;
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
+/* Right column: the phoenix on a warm panel carrying the vision line.
+   CLIENT ASSET: to use a photograph here instead, replace .hero__panel
+   with an <img> in the same grid cell. */
+.hero__panel {
+  position: relative;
+  background: var(--surface-warm);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: var(--s5) var(--s4);
+  text-align: center;
+}
+.hero__panel::before {
+  content: "";
+  position: absolute; inset: 0 0 auto 0;
+  height: 4px;
+  background: var(--flame);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.hero__panel img { width: 7.5rem; height: 7.5rem; margin: 0 auto var(--s3); }
+.hero__vision {
+  margin: 0 auto;
+  max-width: 26ch;
+  font-family: var(--font-serif);
+  font-size: var(--fs-h3);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.hero__vision-label {
+  display: block;
+  margin-top: var(--s3);
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   9. Interior page header
+   -------------------------------------------------------------------------- */
+.page-head {
+  padding-block: var(--s6);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.page-head__lead {
+  margin-top: var(--s3);
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   10. Editorial two-part block (mission / vision)
+   -------------------------------------------------------------------------- */
+.editorial { display: grid; gap: var(--s5); }
+@media (min-width: 48rem) {
+  .editorial { grid-template-columns: 1fr 1fr; gap: var(--s6); }
+  .editorial__part + .editorial__part {
+    padding-left: var(--s6);
+    border-left: 1px solid var(--line-strong);
+  }
+}
+.editorial__part p {
+  font-family: var(--font-serif);
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   11. Programme feature panels — two panels of deliberately unequal weight,
+   not a row of identical cards.
+   -------------------------------------------------------------------------- */
+.features { display: grid; gap: var(--s4); }
+@media (min-width: 60rem) {
+  .features { grid-template-columns: 1.35fr 1fr; align-items: stretch; }
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  background: var(--cream);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.feature__media { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.feature__body { display: flex; flex-direction: column; flex: 1; padding: var(--s4); }
+.feature__body h3 { margin-bottom: var(--s2); }
+.feature__body p  { color: var(--ink-muted); }
+.feature__body .link-arrow { margin-top: auto; padding-top: var(--s3); align-self: flex-start; }
+.feature__meta {
+  margin-bottom: var(--s1);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+/* The lead panel carries more visual weight than its sibling. */
+.feature--lead { background: var(--surface); }
+.feature--lead .feature__body { padding: var(--s5) var(--s4); }
+.feature--lead h3 { font-size: var(--fs-h2); }
+
+/* --------------------------------------------------------------------------
+   12. Bordered list rows — services and similar. Not cards.
+   -------------------------------------------------------------------------- */
+.rows { list-style: none; border-top: 1px solid var(--line-strong); max-width: 52rem; }
+.rows > li {
+  display: grid;
+  gap: var(--s1) var(--s4);
+  padding-block: var(--s3);
+  border-bottom: 1px solid var(--line-strong);
+}
+@media (min-width: 48rem) {
+  .rows > li { grid-template-columns: 15rem 1fr; align-items: baseline; }
+}
+.rows h3 { font-family: var(--font-sans); font-size: var(--fs-h4); font-weight: 700; }
+.rows p  { margin: 0; font-size: var(--fs-body); color: var(--ink-muted); }
+
+/* Numbered workshop blocks */
+.workshops { list-style: none; display: grid; gap: var(--s4); counter-reset: workshop; }
+.workshop {
+  counter-increment: workshop;
+  position: relative;
+  padding: var(--s4);
+  padding-left: var(--s6);
+  background: var(--cream);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+.workshop::before {
+  content: counter(workshop, decimal-leading-zero);
+  position: absolute;
+  top: var(--s4); left: var(--s3);
+  font-family: var(--font-serif);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--accent);
+}
+.workshop h3 { margin-bottom: var(--s2); }
+.workshop ul { list-style: none; display: flex; flex-wrap: wrap; gap: var(--s1) var(--s2); }
+.workshop li {
+  padding: 4px var(--s2);
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   13. Caregiver resources — repeatable, data-shaped markup.
+   Structure maps 1:1 to a future spreadsheet: state / category / name / url.
+   -------------------------------------------------------------------------- */
+.states { display: grid; gap: var(--s5); }
+.state { padding-top: var(--s4); border-top: 3px solid var(--flame); }
+.state > h2 { margin-bottom: var(--s3); }
+.state__group + .state__group { margin-top: var(--s4); }
+.state__group > h3 {
+  margin-bottom: var(--s2);
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.resource-list { list-style: none; display: grid; gap: var(--s1); }
+.resource-list > li { border-bottom: 1px solid var(--line); }
+.resource-list a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s1) var(--s2);
+  padding-block: var(--s2);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--accent);
+}
+.resource-list a:hover { color: var(--accent-deep); text-decoration: underline; }
+.resource-domain {
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   14. Leadership
+   -------------------------------------------------------------------------- */
+.leader { display: grid; gap: var(--s4); align-items: start; }
+@media (min-width: 48rem) {
+  .leader { grid-template-columns: 16rem 1fr; gap: var(--s6); }
+}
+.leader__photo {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+}
+.leader__role {
+  margin: var(--s1) 0 var(--s3);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   15. Donation placeholder — styled so it reads as reserved space,
+   not as a broken page.
+   -------------------------------------------------------------------------- */
+.donate-placeholder {
+  max-width: 44rem;
+  padding: var(--s6) var(--s4);
+  background: var(--surface);
+  border: 2px dashed var(--line-strong);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.donate-placeholder img { width: 4rem; height: 4rem; margin: 0 auto var(--s3); opacity: .55; }
+.donate-placeholder h2 { margin-bottom: var(--s2); font-size: var(--fs-h3); }
+.donate-placeholder p { margin-inline: auto; color: var(--ink-muted); }
+
+.note {
+  display: block;
+  margin-top: var(--s4);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--line-strong);
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   16. Closing CTA band
+   -------------------------------------------------------------------------- */
+.cta-band { padding-block: var(--s6); background: var(--sage); color: var(--on-sage); }
+.cta-band h2 { color: var(--on-sage); max-width: 20ch; }
+.cta-band p  { margin-top: var(--s3); color: var(--on-sage-dim); }
+@media (min-width: 60rem) {
+  .cta-band__grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: var(--s6);
+    align-items: center;
+  }
+  .cta-band .btn-row { margin-top: 0; justify-content: flex-end; }
+}
+
+/* --------------------------------------------------------------------------
+   17. Footer
+   -------------------------------------------------------------------------- */
+.site-footer {
+  padding-block: var(--s6) var(--s4);
+  background: var(--sage-deep);
+  color: var(--on-sage);
+  border-top: 3px solid var(--flame);
+}
+.site-footer a { color: var(--on-sage); text-decoration-color: var(--on-sage-dim); }
+.site-footer a:hover { color: var(--gold); }
+
+.site-footer__grid { display: grid; gap: var(--s5); }
+@media (min-width: 48rem) {
+  .site-footer__grid { grid-template-columns: 1.5fr 1fr 1fr; gap: var(--s6); }
+}
+.site-footer .brand { margin-bottom: var(--s3); }
+.site-footer__mission { max-width: 32ch; font-size: var(--fs-sm); color: var(--on-sage-dim); }
+.site-footer h2 {
+  margin-bottom: var(--s2);
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-sage-dim);
+}
+.footer-list { list-style: none; display: grid; gap: var(--s1); font-size: var(--fs-sm); }
+.footer-list a { display: inline-block; padding-block: 4px; }
+
+.site-footer__base {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s1) var(--s4);
+  margin-top: var(--s5);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--sage);
+  font-size: var(--fs-sm);
+  color: var(--on-sage-dim);
+}
+.site-footer__base p { margin: 0; max-width: none; }
+
+/* --------------------------------------------------------------------------
+   18. Utilities
+   -------------------------------------------------------------------------- */
+.lead { font-size: var(--fs-lead); line-height: 1.6; color: var(--ink-muted); }
+.stack > * + * { margin-top: var(--s3); }
+.section-head { max-width: 46rem; margin-bottom: var(--s5); }
+.section-head p { margin-top: var(--s2); color: var(--ink-muted); }
+
+/* A block of running copy held to a readable width. */
+.prose { max-width: 46rem; }
+
+/* A titled block nested under a section heading (h3 + intro). */
+.subsection { max-width: 46rem; margin-top: var(--s6); margin-bottom: var(--s4); }
+.subsection p { margin-top: var(--s2); margin-bottom: 0; color: var(--ink-muted); }
+
+.btn-row--center { justify-content: center; }
+
+/* --------------------------------------------------------------------------
+   19. Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   20. Forced colours / print
+   -------------------------------------------------------------------------- */
+@media (forced-colors: active) {
+  .btn { border: 2px solid ButtonBorder; }
+  .site-nav__link[aria-current="page"] { outline: 2px solid Highlight; }
+}
+
+@media print {
+  .site-header, .cta-band, .skip-link { display: none; }
+  body { background: #fff; color: #000; font-size: 12pt; }
+  a::after { content: " (" attr(href) ")"; font-size: 10pt; word-break: break-all; }
+}

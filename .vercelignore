@@ -1,0 +1,4 @@
+# Kept in the repo for the Bluehost deployment, but not part of the site
+# Vercel serves. vercel.json covers the same ground there.
+.htaccess
+README.md

@@ -1,0 +1,123 @@
+# Reformed Hope Foundation — website
+
+Static site. Plain HTML, CSS and vanilla JavaScript. No frameworks, no build
+step, no Node. Everything in this folder is deployed exactly as it sits.
+
+## Deploying to Bluehost
+
+Upload the entire contents of this folder to `public_html/` via cPanel File
+Manager or SFTP. There is nothing to compile or install.
+
+Make sure hidden files are included — **`.htaccess` is easy to miss** and it
+provides the custom 404 page, gzip, cache headers and clean URLs.
+
+Then, in cPanel:
+
+1. Turn on the free SSL certificate for the domain.
+2. Once SSL is active, uncomment the HTTPS redirect block at the bottom of
+   `.htaccess`.
+
+## Deploying to Vercel
+
+The site is also set up for Vercel, which builds nothing and serves this folder
+as it sits. `vercel.json` is the Vercel equivalent of `.htaccess`:
+
+| `.htaccess` provides | on Vercel |
+|---|---|
+| `mod_rewrite` clean URLs (`/about`) | `"cleanUrls": true` |
+| `ErrorDocument 404 /404.html` | automatic — a root `404.html` is used |
+| `mod_deflate` compression | automatic (gzip / brotli) |
+| `mod_expires` + `mod_headers` caching | the `headers` rules in `vercel.json` |
+| `mod_mime` types | automatic |
+| the commented-out HTTPS redirect | automatic |
+
+One behavioural difference worth knowing: Vercel's `cleanUrls` *also*
+308-redirects `/about.html` to `/about`, which the Apache config deliberately
+does not do. Nothing breaks — the redirect target is exactly the
+`<link rel="canonical">` each page already declares, and every internal link
+still uses the `.html` form, so the site keeps working as plain files.
+
+`.vercelignore` keeps `.htaccess` and this README out of the deployed output.
+Both stay in the repo for the Bluehost deployment.
+
+The Vercel project is linked to this git repository: **pushing to `main`
+publishes the site.** Neither host is authoritative — the same folder is valid
+on both.
+
+## Before launch — three placeholders to replace
+
+| What | Where | Notes |
+|---|---|---|
+| **EIN** | `XX-XXXXXXX` in the footer of all 7 pages | Search for `EIN PLACEHOLDER`. Also confirm the exact tax-status wording — no 501(c)(3) claim is currently made anywhere on the site. |
+| **Donation platform** | `donate.html` | Search for `DONATION EMBED GOES HERE`. Replace the whole `.donate-placeholder` block with the provider's embed. Do not hand-build a payment form. |
+| **Photographs** | `images/` | See the table below. |
+
+## Client assets
+
+Drop replacements in at the same paths and filenames and no code needs to change.
+
+| File | Used on | Notes |
+|---|---|---|
+| `images/logo-mark.png` | header + footer, every page | The phoenix, cropped from the supplied logo with a transparent background. Replace with the final mark at 256×256 or larger, square, transparent. |
+| `images/allison-viescas-headshot.jpg` | `about.html` | Square (1:1). **Update the `alt` text if the photo changes.** |
+| `images/caring-for-caregivers.jpg` | `index.html` | 3:2. Currently a brand-toned placeholder. When you swap in a real photo, give it descriptive `alt` text — it is currently `alt=""` because a placeholder carries no information. |
+| `images/financial-literacy-youth.jpg` | `index.html` | 3:2, same note as above. |
+| `images/care-works.jpg` | spare | Not currently placed on a page. |
+| `images/og-card.png` | social sharing preview | 1200×630. |
+| `images/logo-original.webp` | — | The original supplied logo. Source asset only, not referenced by any page. |
+
+## Adding caregiver resources
+
+`resources.html` has a large comment block above the resource list showing
+exactly how to add a state, a category, or a single link. The markup is
+deliberately repetitive so it can be edited by hand, and its structure maps
+one-to-one onto a spreadsheet's columns (state / category / name / url /
+description) if the list is ever moved to a Google Sheet.
+
+## Design notes
+
+**Colour.** The palette is derived from the logo, not invented. The logo's
+cream (`#FDFAEF`) is the page background. But the logo's sage wordmark
+(`#80857B`, 3.62:1) and its orange (`#DF7D31`, 2.82:1) both fail WCAG AA as
+text on that cream, so the text colours are darkened derivatives of those same
+hues. The true logo orange survives as `--flame`, restricted to decorative
+rules and motifs. The Donate button uses `--gold` (`#EBA85A`) — sampled from
+the phoenix's wing highlight — with dark ink on it at 6.32:1.
+
+The rules are documented at the top of `styles.css`. The short version:
+**`--flame`, `--line` and `--line-strong` are never text and never outline a
+control. Orange text is always `--accent`.**
+
+**Type.** One self-hosted font: Source Serif 4 (SIL Open Font License 1.1), a
+single 122 KB variable file covering weights 400–700, in `fonts/`. Body text is
+the system sans stack at 17px. There are no external requests of any kind — no
+CDN, no Google Fonts, no analytics, no libraries.
+
+**Accessibility.** Built to WCAG 2.1 AA: semantic landmarks, one `h1` per page,
+no skipped heading levels, a skip link as the first focusable element, visible
+focus on everything, descriptive link text throughout, and `prefers-reduced-motion`
+support. Every foreground/background pairing in the stylesheet was contrast-tested.
+
+If you edit the site, re-check: heading order, that new links describe their
+destination (never "click here"), and that any new colour pairing clears 4.5:1
+for text.
+
+## Editing the shared header and footer
+
+There are no server-side includes, so the header and footer are duplicated in
+each of the 7 HTML files. **A change to the navigation must be made in all
+seven**: `index.html`, `about.html`, `programs.html`, `care-works.html`,
+`resources.html`, `donate.html`, `404.html`.
+
+Note that `404.html` uses root-relative paths (`/styles.css`) because Apache
+serves it from any URL depth; the other pages use relative paths.
+
+## Local preview
+
+```
+python -m http.server 8000
+```
+
+then open <http://localhost:8000>. Clean URLs (`/about`) only work on Apache,
+since they come from `.htaccess`; every internal link uses the `.html` form, so
+the site works fully without it.

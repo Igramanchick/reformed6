@@ -1,0 +1,86 @@
+# Reformed Hope Foundation — Apache config for Bluehost shared hosting.
+# Every directive is wrapped in <IfModule> so the site still serves if a
+# module is unavailable on the host.
+
+Options -Indexes
+DirectoryIndex index.html
+
+# ---------------------------------------------------------------------------
+# Custom error page
+# ---------------------------------------------------------------------------
+ErrorDocument 404 /404.html
+
+# ---------------------------------------------------------------------------
+# Extensionless URLs:  /about  ->  serves about.html
+#
+# This is an ADDITIVE rewrite only — there is deliberately no .html -> /about
+# 301 redirect. Internal links in the HTML all use the .html form so the site
+# works unchanged as plain files (double-clicking index.html, a staging host,
+# or a plan without mod_rewrite). This rule simply makes the clean URL work
+# too, for links people type or share. Each page declares the clean URL via
+# <link rel="canonical">, so search engines consolidate on one address.
+# ---------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}\.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Compression
+# ---------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE image/svg+xml application/xml
+  # woff2 is already compressed — do not re-compress it.
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Caching. HTML stays short so content edits go live promptly; static
+# assets cache hard. Rename an asset file to bust its cache.
+# ---------------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                      "access plus 1 week"
+  ExpiresByType text/html             "access plus 1 hour"
+  ExpiresByType text/css              "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/png             "access plus 1 year"
+  ExpiresByType image/jpeg            "access plus 1 year"
+  ExpiresByType image/webp            "access plus 1 year"
+  ExpiresByType image/x-icon          "access plus 1 year"
+  ExpiresByType font/woff2            "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|png|jpe?g|webp|ico|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+  Header set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Correct MIME types (older shared-hosting Apache builds miss these)
+# ---------------------------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType font/woff2 .woff2
+  AddType image/webp .webp
+  AddType image/svg+xml .svg
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# HTTPS — uncomment once the SSL certificate is active in Bluehost cPanel.
+# ---------------------------------------------------------------------------
+# <IfModule mod_rewrite.c>
+#   RewriteCond %{HTTPS} off
+#   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+# </IfModule>
