@@ -66,7 +66,7 @@ Every affected `<img>` has a comment above it saying so.
 | File | Used on | Notes |
 |---|---|---|
 | `images/logo-mark.png` | header + footer, every page | The phoenix, cropped from the supplied logo with a transparent background. Replace with the final mark at 256×256 or larger, square, transparent. |
-| `images/allison-viescas-headshot.jpg` | `about.html` | Square (1:1). **Currently a brand-toned placeholder, not a photograph** — but unlike the others it carries a descriptive `alt` announcing a portrait of a named person. Until the real headshot lands, screen-reader users are told there is a portrait that does not exist. Highest-priority swap. |
+| `images/allison-viescas-headshot.jpg` | `about.html` | Square (1:1), 800×800. **Real photograph, in place.** Sourced from the Foundation’s WordPress site. Its `alt` describes a portrait of a named person, which is now accurate. The reference in `about.html` carries a `?v=` query string: the asset cache rule in `vercel.json` is `immutable` for a year, so replacing this file again means bumping that number or returning visitors keep the old photo. |
 | `images/caring-for-caregivers.jpg` | `index.html` | 3:2. Currently a brand-toned placeholder. When you swap in a real photo, give it descriptive `alt` text — it is currently `alt=""` because a placeholder carries no information. |
 | `images/financial-literacy-youth.jpg` | `index.html` | 3:2, same note as above. |
 | `images/care-works.jpg` | `care-works.html` | 3:2. Brand-toned placeholder, same `alt` note as the two above. |
