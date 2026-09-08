@@ -67,9 +67,9 @@ Every affected `<img>` has a comment above it saying so.
 |---|---|---|
 | `images/logo-mark.png` | header + footer, every page | The phoenix, cropped from the supplied logo with a transparent background. Replace with the final mark at 256×256 or larger, square, transparent. |
 | `images/allison-viescas-headshot.jpg` | `about.html` | Square (1:1), 800×800. **Real photograph, in place.** Sourced from the Foundation’s WordPress site. Its `alt` describes a portrait of a named person, which is now accurate. The reference in `about.html` carries a `?v=` query string: the asset cache rule in `vercel.json` is `immutable` for a year, so replacing this file again means bumping that number or returning visitors keep the old photo. |
-| `images/caring-for-caregivers.jpg` | `index.html` | 3:2. Currently a brand-toned placeholder. When you swap in a real photo, give it descriptive `alt` text — it is currently `alt=""` because a placeholder carries no information. |
+| `images/caring-for-caregivers.jpg` | `index.html` | 3:2. **Real photograph, in place.** Free-license stock photo from Pexels (photographer: Jsme MILA), showing a caregiver talking with a group of seniors at a table. Its `alt` describes the scene; the reference carries `?v=2`, so bump that again if this file is replaced. |
 | `images/financial-literacy-youth.jpg` | `index.html` | 3:2. **Real photograph, in place.** Public-domain US Navy Fleet and Family Service Center photo (via Wikimedia Commons, credit: Paul Long / DVIDS), showing a "How To Count Money" class for grade-school kids. Its `alt` describes the scene, so the same immutable-cache note applies: bump `?v=` again if this file is replaced. |
-| `images/care-works.jpg` | `care-works.html` | 3:2. Brand-toned placeholder, same `alt` note as the two above. |
+| `images/care-works.jpg` | `care-works.html` | 16:9. **Real photograph, in place.** Free-license stock photo from Pexels (photographer: Jsme MILA), showing a caregiver helping an elderly woman with tea at home. Its `alt` describes the scene; the reference carries `?v=2`, same cache-bust note as above. |
 | `images/og-card.png` | social sharing preview | 1200×630. |
 | `images/logo-original.webp` | — | The original supplied logo. Source asset only, not referenced by any page. |
 
