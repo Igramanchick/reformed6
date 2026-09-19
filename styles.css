@@ -831,7 +831,38 @@ ul, ol { margin: 0; padding: 0; }
 .btn-row--center { justify-content: center; }
 
 /* --------------------------------------------------------------------------
-   19. Reduced motion
+   19. Programs accordion — native <details>/<summary>, no JS. Each program
+   on the Programs page collapses so a visitor opens only the one they want.
+   -------------------------------------------------------------------------- */
+.program__summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s3);
+  cursor: pointer;
+  list-style: none;
+}
+.program__summary::marker,
+.program__summary::-webkit-details-marker { display: none; }
+.program__summary .section-head { margin-bottom: 0; }
+
+.program__summary::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 0.65em;
+  height: 0.65em;
+  margin-top: 0.5em;
+  border-right: 2px solid var(--ink-muted);
+  border-bottom: 2px solid var(--ink-muted);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+.program[open] > .program__summary::after { transform: rotate(-135deg); }
+
+.program__body { padding-top: var(--s5); }
+
+/* --------------------------------------------------------------------------
+   20. Reduced motion
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -844,7 +875,7 @@ ul, ol { margin: 0; padding: 0; }
 }
 
 /* --------------------------------------------------------------------------
-   20. Forced colours / print
+   21. Forced colours / print
    -------------------------------------------------------------------------- */
 @media (forced-colors: active) {
   .btn { border: 2px solid ButtonBorder; }
